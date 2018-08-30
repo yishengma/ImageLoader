@@ -1,6 +1,8 @@
 package yishengma;
 
 import android.app.Application;
+import android.content.Context;
+import android.os.Environment;
 
 import java.io.File;
 
@@ -9,13 +11,14 @@ import java.io.File;
  */
 
 public class App extends Application {
-   public static  File cacheDir;
+    private static Context context;
     @Override
     public void onCreate() {
         super.onCreate();
-        cacheDir = getExternalCacheDir();
+        context = getApplicationContext();
     }
 
-
-
+    public static Context getContext() {
+        return context;
+    }
 }

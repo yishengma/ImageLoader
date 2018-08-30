@@ -22,22 +22,46 @@ import yishengma.utils.CloseUtil;
  * Created by asus on 18-8-29.
  */
 
-public class ImageLoader {
-    //图片缓存
+public final class ImageLoader {
+    private static ImageLoader imageLoader;
+
+    //图片缓存，抽象，接口隔离原则
     private ImageCache mImageCache;
     //线程池，线程数量为 CPU 数量
     private ExecutorService mExecutorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     private static final String TAG = "ImageLoader";
 
-    public ImageLoader() {
+    private ImageLoader() {
         initImageLoader();
     }
 
+
+    /**
+     * 单例模式
+     * @return
+     */
+    public static ImageLoader getInscance(){
+        if (imageLoader==null){
+            synchronized (ImageLoader.class){
+                if (imageLoader==null){
+                    imageLoader = new ImageLoader();
+                }
+            }
+        }
+
+        return imageLoader;
+    }
+
     private void initImageLoader() {
+        //依赖细节
         mImageCache = new MemoryCache();
     }
 
+    /**
+     * 实现可以注入不同的 ImageCache ,依赖抽象
+     * @param imageCache
+     */
     public void setImageCache(ImageCache imageCache) {
         mImageCache = imageCache;
     }

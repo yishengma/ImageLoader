@@ -9,6 +9,8 @@ import android.widget.ImageView;
 
 import java.util.List;
 
+import yishengma.imageloader.DiskCache;
+import yishengma.imageloader.DiskLruCache;
 import yishengma.imageloader.DoubleCache;
 import yishengma.imageloader.ImageLoader;
 import yishengma.imageloader.R;
@@ -19,12 +21,10 @@ import yishengma.imageloader.R;
 
 public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<String> mUrlList;
-    private ImageLoader mImageLoader;
     private static final String TAG = "ImageAdapter";
     public ImageAdapter(List<String> urlList) {
         mUrlList = urlList;
-        mImageLoader = new ImageLoader();
-        mImageLoader.setImageCache(new DoubleCache());
+        ImageLoader.getInscance().setImageCache(new DiskLruCache());
     }
 
     @Override
@@ -36,7 +36,7 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ImageView imageView = holder.itemView.findViewById(R.id.imv_image);
-        mImageLoader.displayImage(mUrlList.get(position),imageView);
+        ImageLoader.getInscance().displayImage(mUrlList.get(position),imageView);
 
     }
 
