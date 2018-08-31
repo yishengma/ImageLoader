@@ -21,7 +21,7 @@ public class NetLoader extends AbsLoader {
 
     @Override
     Bitmap onLoadImage(BitmapRequest request) {
-        Log.e(TAG, "downloadImage: 加载" );
+
         InputStream inputStream=null;
         ByteArrayOutputStream outputStream=null;
         try {

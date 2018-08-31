@@ -44,7 +44,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
 
 
         holder.mImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -53,12 +53,11 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
             ImageLoader.getInstance().displayImage(holder.mImageView, mUrlList.get(position), new ImageLoader.ImageListener() {
                 @Override
                 public void onComplete(ImageView imageView, Bitmap bitmap, String uri, boolean isSuccess) {
-                    Log.e(TAG, "onComplete: ");
+                     imageView.setImageBitmap(bitmap);
                 }
             });
         }
-        Log.e(TAG, "onBindViewHolder: Url" + holder.mImageView.getTag().equals(mUrlList.get(position)));
-        Log.e(TAG, "onBindViewHolder: " + position);
+
 
     }
 

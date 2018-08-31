@@ -30,7 +30,7 @@ public class DiskCache implements BitmapCache {
             File file = FileUtil.getDiskCacheDir(MD5Util.hashKeyForDisk(key.imageUri));
             outputStream = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-            Log.e(TAG, "put: ");
+
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -40,7 +40,7 @@ public class DiskCache implements BitmapCache {
 
     @Override
     public Bitmap get(BitmapRequest key) {
-        Log.e(TAG, "get: " );
+
         File file = FileUtil.getDiskCacheDir(MD5Util.hashKeyForDisk(key.imageUri));
         return file.exists() ? BitmapFactory.decodeFile(file.getAbsolutePath()) : null;
     }

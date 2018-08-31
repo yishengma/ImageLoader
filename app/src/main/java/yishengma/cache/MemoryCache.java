@@ -31,13 +31,13 @@ public class MemoryCache  implements BitmapCache {
 
     @Override
     public void put(BitmapRequest key, Bitmap bitmap) {
-        Log.e(TAG, "put: " );
+
         mImageCache.put(MD5Util.hashKeyForDisk(key.imageUri),bitmap);
     }
 
     @Override
     public Bitmap get(BitmapRequest key) {
-        Log.e(TAG, "get: " );
+
         return mImageCache.get(MD5Util.hashKeyForDisk(key.imageUri));
     }
 

@@ -56,7 +56,7 @@ public class DiskLruCache implements BitmapCache {
             bitmap.compress(Bitmap.CompressFormat.JPEG,100,outputStream);
             editor.commit();
             mDiskLruCache.flush();
-            Log.e(TAG, "put: " );
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -71,7 +71,7 @@ public class DiskLruCache implements BitmapCache {
                 return null;
             }
             InputStream inputStream = snapshot.getInputStream(0);
-            Log.e(TAG, "get: " );
+
             return BitmapFactory.decodeStream(inputStream);
         } catch (IOException e) {
             e.printStackTrace();

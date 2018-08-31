@@ -22,14 +22,14 @@ public class DoubleCache implements BitmapCache {
 
     @Override
     public void put(BitmapRequest key, Bitmap bitmap) {
-        Log.e(TAG, "put: " );
+
         mDiskCache.put(key,bitmap);
         mMemoryCache.put(key,bitmap);
     }
 
     @Override
     public Bitmap get(BitmapRequest key) {
-        Log.e(TAG, "get: " );
+
         Bitmap bitmap = mMemoryCache.get(key);
         if (bitmap==null){
             bitmap = mDiskCache.get(key);
