@@ -1,16 +1,19 @@
 package yishengma.demo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
+import yishengma.App;
 import yishengma.imageloader.R;
 
 /**
@@ -37,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
             mImageList.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2364244149,3298797080&fm=27&gp=0.jpg");
             mImageList.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=612545450,2731747183&fm=27&gp=0.jpg");
         }
+
     }
 
 
@@ -46,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         imageRecyclerImage.setLayoutManager(manager);
         ImageAdapter adapter = new ImageAdapter(mImageList);
         imageRecyclerImage.setAdapter(adapter);
+
     }
 
 }

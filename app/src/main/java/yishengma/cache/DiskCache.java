@@ -1,36 +1,33 @@
-package yishengma.imageloader;
+package yishengma.cache;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
 
-import yishengma.App;
-import yishengma.cache.Util;
+import yishengma.request.BitmapRequest;
 import yishengma.utils.CloseUtil;
 import yishengma.utils.FileUtil;
+import yishengma.utils.MD5Util;
 
 /**
  * 本地文件缓存
  */
 
-public class DiskCache implements ImageCache {
+public class DiskCache implements BitmapCache {
     private static final String TAG = "DiskCache";
 
     @Override
-    public void put(String url, Bitmap bitmap) {
+    public void put(BitmapRequest key, Bitmap bitmap) {
         FileOutputStream outputStream = null;
 
 
         try {
 
-            File file = FileUtil.getDiskCacheDir(url.replace("/", ""));
+            File file = FileUtil.getDiskCacheDir(MD5Util.hashKeyForDisk(key.imageUri));
             outputStream = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
             Log.e(TAG, "put: ");
@@ -39,12 +36,21 @@ public class DiskCache implements ImageCache {
         } finally {
             CloseUtil.close(outputStream);
         }
-
     }
 
     @Override
-    public Bitmap get(String url) {
-        File file = FileUtil.getDiskCacheDir(url.replace("/", ""));
+    public Bitmap get(BitmapRequest key) {
+        Log.e(TAG, "get: " );
+        File file = FileUtil.getDiskCacheDir(MD5Util.hashKeyForDisk(key.imageUri));
         return file.exists() ? BitmapFactory.decodeFile(file.getAbsolutePath()) : null;
     }
+
+    @Override
+    public void remove(BitmapRequest key) {
+
+    }
+
+
+
+
 }

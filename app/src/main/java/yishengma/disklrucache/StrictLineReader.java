@@ -1,4 +1,4 @@
-package yishengma.cache;
+package yishengma.disklrucache;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;

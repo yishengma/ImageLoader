@@ -12,6 +12,7 @@ import java.io.File;
 
 public class App extends Application {
     private static Context context;
+    public static int anInt = 0;
     @Override
     public void onCreate() {
         super.onCreate();

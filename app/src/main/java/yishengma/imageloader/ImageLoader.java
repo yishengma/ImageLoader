@@ -3,12 +3,10 @@ package yishengma.imageloader;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
-import android.util.LruCache;
 import android.widget.ImageView;
 
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 
@@ -16,6 +14,13 @@ import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import yishengma.cache.BitmapCache;
+import yishengma.cache.MemoryCache;
+import yishengma.config.DisplayConfig;
+import yishengma.config.ImageLoaderConfig;
+import yishengma.policy.SerialPolicy;
+import yishengma.request.BitmapRequest;
+import yishengma.request.RequestQueue;
 import yishengma.utils.CloseUtil;
 
 /**
@@ -24,16 +29,17 @@ import yishengma.utils.CloseUtil;
 
 public final class ImageLoader {
     private static ImageLoader imageLoader;
-
+    public ImageLoaderConfig mConfig;
     //图片缓存，抽象，接口隔离原则
-    private ImageCache mImageCache;
-    //线程池，线程数量为 CPU 数量
-    private ExecutorService mExecutorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private BitmapCache mBitmapCache;
+    //网络请求队列
+    private RequestQueue mRequestQueue;
+
 
     private static final String TAG = "ImageLoader";
 
     private ImageLoader() {
-        initImageLoader();
+
     }
 
 
@@ -41,7 +47,7 @@ public final class ImageLoader {
      * 单例模式
      * @return
      */
-    public static ImageLoader getInscance(){
+    public static ImageLoader getInstance(){
         if (imageLoader==null){
             synchronized (ImageLoader.class){
                 if (imageLoader==null){
@@ -53,82 +59,66 @@ public final class ImageLoader {
         return imageLoader;
     }
 
-    private void initImageLoader() {
-        //依赖细节
-        mImageCache = new MemoryCache();
+    public void init(ImageLoaderConfig config){
+        mConfig = config;
+        mBitmapCache = config.mBitmapCache;
+        mRequestQueue = new RequestQueue(config.mThreadCount);
+        checkConfig();
+        mRequestQueue.start();
+
+
+    }
+
+    private void checkConfig(){
+        if (mConfig==null){
+            throw new RuntimeException("The config of ImageLoader is NUll,please call the init method to initialize!");
+        }
+        if (mConfig.mLoadPolicy==null){
+            mConfig.mLoadPolicy = new SerialPolicy();
+
+        }
+        if (mBitmapCache==null){
+            mBitmapCache = new MemoryCache();
+        }
+
+    }
+
+    public void displayImage(ImageView imageView, String uri) {
+        displayImage(imageView, uri, null, null);
+    }
+
+    public void displayImage(ImageView imageView, String uri, DisplayConfig config) {
+        displayImage(imageView, uri, config, null);
+    }
+
+    public void displayImage(ImageView imageView, String uri, ImageListener listener) {
+        displayImage(imageView, uri, null, listener);
+    }
+
+    public void displayImage(ImageView imageView,String uri,DisplayConfig config,ImageListener listener){
+        BitmapRequest request = new BitmapRequest(imageView,uri,config,listener);
+        request.displayConfig = request.displayConfig!=null?request.displayConfig:mConfig.mDisplayConfig;
+        request.imageListener = listener;
+        mRequestQueue.addRequest(request);
+    }
+
+    public void stop() {
+        mRequestQueue.stop();
+    }
+
+
+
+    public BitmapCache getBitmapCache() {
+        return mBitmapCache;
     }
 
     /**
-     * 实现可以注入不同的 ImageCache ,依赖抽象
-     * @param imageCache
+     * 图片加载Listener
+     * 在加载成功后进行回调
+     * @author mrsimple
      */
-    public void setImageCache(ImageCache imageCache) {
-        mImageCache = imageCache;
+    public  interface ImageListener {
+         void onComplete(ImageView imageView, Bitmap bitmap, String uri,boolean isSuccess);
     }
-
-    public void displayImage(final String url, final ImageView imageView) {
-        Bitmap bitmap = mImageCache.get(url);
-        if (bitmap != null) {
-            imageView.setImageBitmap(bitmap);
-            Log.e(TAG, "displayImage: 缓存");
-            return;
-        }
-
-        imageView.setTag(url);
-        mExecutorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                Bitmap bitmap = downloadImage(url);
-                if (bitmap == null) {
-                    return;
-
-                }
-                if (imageView.getTag().equals(url)) {
-
-                    imageView.setImageBitmap(bitmap);
-                }
-                mImageCache.put(url, bitmap);
-
-
-            }
-        });
-
-
-    }
-
-    public  Bitmap downloadImage(String imageUrl) {
-        Log.e(TAG, "downloadImage: 加载" );
-        InputStream inputStream=null;
-        ByteArrayOutputStream outputStream=null;
-        try {
-            URL url=new URL(imageUrl);
-            HttpURLConnection httpURLConnection=(HttpURLConnection) url.openConnection();
-            httpURLConnection.setRequestMethod("GET");
-            httpURLConnection.setReadTimeout(2000);
-            httpURLConnection.connect();
-
-            if(httpURLConnection.getResponseCode()==200){
-                inputStream = httpURLConnection.getInputStream();
-                outputStream = new ByteArrayOutputStream();
-
-                byte buffer[]=new byte[1024*8];
-                int len=-1;
-                while ((len = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, len);
-                }
-
-                byte[] bu=outputStream.toByteArray();
-                return BitmapFactory.decodeByteArray(bu, 0, bu.length);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }finally{
-            CloseUtil.close(inputStream);
-            CloseUtil.close(outputStream);
-        }
-        return null;
-    }
-
-
 
 }

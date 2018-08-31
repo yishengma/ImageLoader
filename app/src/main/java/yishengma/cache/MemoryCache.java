@@ -1,14 +1,19 @@
-package yishengma.imageloader;
+package yishengma.cache;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.util.LruCache;
+
+import yishengma.request.BitmapRequest;
+import yishengma.utils.MD5Util;
 
 /**
  * 内存缓存
  */
 
-public class MemoryCache  implements ImageCache{
+public class MemoryCache  implements BitmapCache {
     private LruCache<String, Bitmap> mImageCache;
+    private static final String TAG = "MemoryCache";
 
     public MemoryCache() {
         initMemoryCache();
@@ -25,12 +30,19 @@ public class MemoryCache  implements ImageCache{
     }
 
     @Override
-    public void put(String url, Bitmap bitmap) {
-        mImageCache.put(url, bitmap);
+    public void put(BitmapRequest key, Bitmap bitmap) {
+        Log.e(TAG, "put: " );
+        mImageCache.put(MD5Util.hashKeyForDisk(key.imageUri),bitmap);
     }
 
     @Override
-    public Bitmap get(String url) {
-        return mImageCache.get(url);
+    public Bitmap get(BitmapRequest key) {
+        Log.e(TAG, "get: " );
+        return mImageCache.get(MD5Util.hashKeyForDisk(key.imageUri));
+    }
+
+    @Override
+    public void remove(BitmapRequest key) {
+        mImageCache.remove(MD5Util.hashKeyForDisk(key.imageUri));
     }
 }

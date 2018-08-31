@@ -1,4 +1,4 @@
-package yishengma.cache;
+package yishengma.disklrucache;
 
 import android.content.Context;
 import android.os.Environment;

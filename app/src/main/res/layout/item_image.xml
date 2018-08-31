@@ -4,8 +4,13 @@
     android:layout_height="@dimen/item_height">
 
     <ImageView
+        android:src="@drawable/ic_launcher_background"
         android:layout_gravity="center"
         android:id="@+id/imv_image"
         android:layout_width="@dimen/image_size"
         android:layout_height="@dimen/image_size" />
+    <TextView
+        android:id="@+id/tv_position"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </LinearLayout>
