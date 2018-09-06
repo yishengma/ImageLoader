@@ -8,6 +8,9 @@ import java.security.NoSuchAlgorithmException;
  */
 
 public class MD5Util {
+
+    // MD5 加密算法
+
     public static String hashKeyForDisk(String key) {
         String cacheKey;
         try {

@@ -1,5 +1,6 @@
 package yishengma;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.os.Environment;
@@ -11,8 +12,10 @@ import java.io.File;
  */
 
 public class App extends Application {
-    private static Context context;
-    public static int anInt = 0;
+    @SuppressLint("StaticFieldLeak")
+    private static Context context;// 这里是Application Context
+
+
     @Override
     public void onCreate() {
         super.onCreate();

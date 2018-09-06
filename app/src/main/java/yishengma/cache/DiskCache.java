@@ -47,7 +47,10 @@ public class DiskCache implements BitmapCache {
 
     @Override
     public void remove(BitmapRequest key) {
-
+        File file = FileUtil.getDiskCacheDir(MD5Util.hashKeyForDisk(key.imageUri));
+        if (file.exists()){
+            file.delete();
+        }
     }
 
 

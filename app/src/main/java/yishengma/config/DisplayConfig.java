@@ -6,8 +6,8 @@ package yishengma.config;
 
 public class DisplayConfig {
 
-      public static int failedResId ;
-     public static  int loadingResId;
+    public static int failedResId;
+    public static int loadingResId;
 
 
 }
